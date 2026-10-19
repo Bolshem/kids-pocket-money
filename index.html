@@ -1,0 +1,290 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pocket Money</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@500;700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #FFF8EE;
+    --ink: #2B2A33;
+    --muted: #7A7685;
+    --card: #FFFFFF;
+    --line: #F0E6D6;
+    --sky: #2F80ED;
+    --sky-soft: #E6F0FD;
+    --noam: #27AE60;
+    --noam-soft: #E4F6EB;
+    --spend: #FF8A3D;
+    --savings: #8E6CEF;
+    --good: #F2C94C;
+    --neg: #E5484D;
+    --pos: #1E9E5A;
+    --shadow: 0 6px 0 rgba(43, 42, 51, 0.08);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #17161C;
+      --ink: #F4F1EA;
+      --muted: #A39FAF;
+      --card: #23222B;
+      --line: #34323E;
+      --sky-soft: #1C2A40;
+      --noam-soft: #1A3326;
+      --shadow: 0 6px 0 rgba(0, 0, 0, 0.35);
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #17161C; --ink: #F4F1EA; --muted: #A39FAF; --card: #23222B; --line: #34323E;
+    --sky-soft: #1C2A40; --noam-soft: #1A3326; --shadow: 0 6px 0 rgba(0, 0, 0, 0.35);
+  }
+
+  * { box-sizing: border-box; }
+  html, body { margin: 0; }
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: "Nunito", system-ui, sans-serif;
+    font-weight: 700;
+    -webkit-font-smoothing: antialiased;
+  }
+  main { max-width: 980px; margin: 0 auto; padding: 24px 16px 48px; }
+
+  header { text-align: center; margin-bottom: 20px; }
+  h1 { font-size: clamp(28px, 6vw, 40px); font-weight: 900; margin: 0; letter-spacing: -0.5px; }
+  .next {
+    display: inline-flex; align-items: center; gap: 8px;
+    margin-top: 10px; padding: 8px 14px;
+    background: var(--card); border: 2px solid var(--line); border-radius: 999px;
+    color: var(--muted); font-size: 15px;
+  }
+  .next b { color: var(--ink); }
+
+  .kids { display: grid; grid-template-columns: 1fr; gap: 20px; }
+  @media (min-width: 760px) { .kids { grid-template-columns: 1fr 1fr; } .kids.single { grid-template-columns: minmax(0, 520px); justify-content: center; } }
+
+  .kid {
+    background: var(--card); border: 2px solid var(--line); border-radius: 24px;
+    box-shadow: var(--shadow); overflow: hidden;
+  }
+  .kid-top { padding: 20px 20px 16px; background: var(--soft); }
+  .kid-name { display: flex; align-items: center; gap: 12px; }
+  .avatar {
+    width: 48px; height: 48px; border-radius: 50%;
+    background: var(--accent); color: #fff;
+    display: grid; place-items: center; font-size: 24px; font-weight: 900;
+  }
+  .kid-name h2 { margin: 0; font-size: 26px; font-weight: 900; }
+  .total-label { margin-top: 14px; color: var(--muted); font-size: 14px; text-transform: uppercase; letter-spacing: 1px; }
+  .total { font-size: clamp(40px, 10vw, 52px); font-weight: 900; line-height: 1.05; color: var(--accent); }
+
+  .jars { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; padding: 16px; }
+  .jar .amt { white-space: nowrap; letter-spacing: -0.3px; }
+  .jar .amt.long { font-size: clamp(15px, 4vw, 20px); }
+  .jar {
+    border-radius: 18px; padding: 14px 8px 12px; text-align: center;
+    background: color-mix(in srgb, var(--c) 14%, var(--card));
+    border: 2px solid color-mix(in srgb, var(--c) 35%, transparent);
+  }
+  .jar svg { width: 34px; height: 34px; display: block; margin: 0 auto 6px; }
+  .jar .label { font-size: 13px; color: var(--muted); }
+  .jar .amt { font-size: clamp(18px, 5vw, 24px); font-weight: 900; margin-top: 2px; }
+  .jar .plus { font-size: 12px; color: var(--muted); margin-top: 4px; }
+  .neg { color: var(--neg) !important; }
+
+  details { border-top: 2px solid var(--line); }
+  summary {
+    list-style: none; cursor: pointer; padding: 14px 20px;
+    display: flex; justify-content: space-between; align-items: center;
+    color: var(--muted); font-size: 15px;
+  }
+  summary::-webkit-details-marker { display: none; }
+  summary .chev { transition: transform .2s; }
+  details[open] summary .chev { transform: rotate(180deg); }
+  ul.activity { list-style: none; margin: 0; padding: 0 20px 16px; }
+  ul.activity li {
+    display: grid; grid-template-columns: 56px 1fr auto; gap: 10px; align-items: center;
+    padding: 10px 0; border-top: 1px solid var(--line); font-size: 15px;
+  }
+  ul.activity li:first-child { border-top: 0; }
+  .when { color: var(--muted); font-size: 13px; }
+  .what small { display: block; color: var(--muted); font-size: 12px; font-weight: 700; }
+  .money { font-weight: 900; }
+  .money.in { color: var(--pos); }
+  .money.out { color: var(--neg); }
+  .empty { color: var(--muted); padding: 4px 0 8px; font-size: 14px; }
+
+  .status { text-align: center; color: var(--muted); font-size: 13px; margin-top: 22px; }
+  .demo {
+    display: inline-block; margin-left: 6px; padding: 2px 8px; border-radius: 6px;
+    background: var(--good); color: #2B2A33; font-size: 11px; text-transform: uppercase; letter-spacing: 1px;
+  }
+  .error { color: var(--neg); }
+</style>
+</head>
+<body>
+<main>
+  <header>
+    <h1>Pocket Money</h1>
+    <div class="next" id="next" hidden>Next pocket money: <b id="nextDate"></b></div>
+  </header>
+  <section class="kids" id="kids"></section>
+  <p class="status" id="status">Loading…</p>
+</main>
+
+<script>
+  // Published-to-web CSV of the "Balances" tab (File > Share > Publish to web > Balances > CSV).
+  // Leave empty to show sample numbers.
+  const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRpvt0TsVC7vtc5pWpFWG3tJYpZgemqTZ_NZoeLjkXv5v3INDut5aVv_WMslqeLoLy1cyxu_BLzatW3/pub?gid=0&single=true&output=csv";
+  const REFRESH_MS = 5 * 60 * 1000;
+
+  const KIDS = [
+    { name: "Sky",  accent: "var(--sky)",  soft: "var(--sky-soft)",  row: 6, allowRow: 10 },
+    { name: "Noam", accent: "var(--noam)", soft: "var(--noam-soft)", row: 7, allowRow: 11 },
+  ];
+  // Column indexes in the Balances tab (A=0): C..F = Spend, Savings, Good things, Total.
+  const BAL = { spend: 2, savings: 3, good: 4, total: 5 };
+  // Recent activity block: Sky in B..E, Noam in G..J, data from sheet row 16.
+  const RECENT_FIRST_ROW = 16, RECENT_ROWS = 8;
+
+  const JARS = [
+    { key: "spend",   label: "Spend",       color: "var(--spend)",   icon: iconBag() },
+    { key: "savings", label: "Savings",     color: "var(--savings)", icon: iconPig() },
+    { key: "good",    label: "Good things", color: "var(--good)",    icon: iconHeart() },
+  ];
+
+  const DEMO = {
+    next: "Saturday, Oct 24",
+    kids: {
+      Sky:  { spend: "$12.50", savings: "$48.00", good: "$9.00", total: "$69.50",
+              allow: ["$4.00", "$3.00", "$3.00"],
+              recent: [["Oct 18", "Spend", "-$2.50", "Ice cream"], ["Oct 17", "Spend", "+$4.00", "Weekly allowance"], ["Oct 17", "Savings", "+$3.00", "Weekly allowance"], ["Oct 17", "Good things", "+$3.00", "Weekly allowance"]] },
+      Noam: { spend: "$6.00", savings: "$31.00", good: "$12.00", total: "$49.00",
+              allow: ["$4.00", "$3.00", "$3.00"],
+              recent: [["Oct 18", "Spend", "-$20.00", "Lego"], ["Oct 17", "Spend", "+$4.00", "Weekly allowance"]] },
+    },
+  };
+
+  const params = new URLSearchParams(location.search);
+  const onlyKid = (params.get("kid") || "").toLowerCase();
+
+  function parseCSV(text) {
+    const rows = []; let row = [], cell = "", q = false;
+    for (let i = 0; i < text.length; i++) {
+      const ch = text[i];
+      if (q) {
+        if (ch === '"' && text[i + 1] === '"') { cell += '"'; i++; }
+        else if (ch === '"') q = false;
+        else cell += ch;
+      } else if (ch === '"') q = true;
+      else if (ch === ",") { row.push(cell); cell = ""; }
+      else if (ch === "\n") { row.push(cell); rows.push(row); row = []; cell = ""; }
+      else if (ch !== "\r") cell += ch;
+    }
+    if (cell !== "" || row.length) { row.push(cell); rows.push(row); }
+    return rows;
+  }
+
+  function fromSheet(rows) {
+    const cell = (r, c) => ((rows[r - 1] || [])[c] || "").trim();
+    const data = { next: cell(3, 2), kids: {} };
+    KIDS.forEach((k, i) => {
+      const recentStart = i === 0 ? 1 : 6;
+      const recent = [];
+      for (let r = RECENT_FIRST_ROW; r < RECENT_FIRST_ROW + RECENT_ROWS; r++) {
+        const d = cell(r, recentStart), cat = cell(r, recentStart + 1), amt = cell(r, recentStart + 2), note = cell(r, recentStart + 3);
+        if (d && amt) recent.push([d, cat, amt, note]);
+      }
+      data.kids[k.name] = {
+        spend: cell(k.row, BAL.spend), savings: cell(k.row, BAL.savings),
+        good: cell(k.row, BAL.good), total: cell(k.row, BAL.total),
+        allow: [cell(k.allowRow, 2), cell(k.allowRow, 3), cell(k.allowRow, 4)],
+        recent,
+      };
+    });
+    return data;
+  }
+
+  const isNeg = (s) => /^-|^\(/.test(String(s).trim());
+  const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+
+  function render(data, isDemo) {
+    const kidsEl = document.getElementById("kids");
+    const list = KIDS.filter((k) => !onlyKid || k.name.toLowerCase() === onlyKid);
+    kidsEl.classList.toggle("single", list.length === 1);
+    kidsEl.innerHTML = list.map((k) => kidCard(k, data.kids[k.name])).join("");
+
+    if (data.next) {
+      document.getElementById("nextDate").textContent = data.next;
+      document.getElementById("next").hidden = false;
+    }
+    const now = new Date().toLocaleTimeString([], { hour: "numeric", minute: "2-digit" });
+    document.getElementById("status").innerHTML =
+      "Updated " + now + (isDemo ? '<span class="demo">Sample numbers</span>' : "");
+  }
+
+  function kidCard(k, d) {
+    const jars = JARS.map((j, i) => `
+      <div class="jar" style="--c:${j.color}">
+        ${j.icon}
+        <div class="label">${j.label}</div>
+        <div class="amt ${isNeg(d[j.key]) ? "neg" : ""} ${String(d[j.key] || "").length > 7 ? "long" : ""}">${esc(d[j.key] || "$0.00")}</div>
+        ${d.allow[i] && d.allow[i] !== "$0.00" ? `<div class="plus">+${esc(d.allow[i])} each Saturday</div>` : ""}
+      </div>`).join("");
+
+    const items = d.recent.length
+      ? d.recent.map(([when, cat, amt, note]) => {
+          const out = isNeg(amt);
+          return `<li>
+            <span class="when">${esc(when)}</span>
+            <span class="what">${esc(note || cat)}<small>${esc(cat)}</small></span>
+            <span class="money ${out ? "out" : "in"}">${esc(amt)}</span>
+          </li>`;
+        }).join("")
+      : `<li class="empty">Nothing here yet.</li>`;
+
+    return `
+      <article class="kid" style="--accent:${k.accent};--soft:${k.soft}">
+        <div class="kid-top">
+          <div class="kid-name"><div class="avatar">${k.name[0]}</div><h2>${k.name}</h2></div>
+          <div class="total-label">All my money</div>
+          <div class="total ${isNeg(d.total) ? "neg" : ""}">${esc(d.total || "$0.00")}</div>
+        </div>
+        <div class="jars">${jars}</div>
+        <details ${onlyKid ? "open" : ""}>
+          <summary>What happened lately <svg class="chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></summary>
+          <ul class="activity">${items}</ul>
+        </details>
+      </article>`;
+  }
+
+  async function load() {
+    if (!CSV_URL || params.has("demo")) { render(DEMO, true); return; }
+    try {
+      const res = await fetch(CSV_URL + (CSV_URL.includes("?") ? "&" : "?") + "t=" + Date.now(), { cache: "no-store" });
+      if (!res.ok) throw new Error(res.status);
+      render(fromSheet(parseCSV(await res.text())), false);
+    } catch (e) {
+      document.getElementById("status").innerHTML = '<span class="error">Couldn\'t load the numbers right now. Try again in a minute.</span>';
+    }
+  }
+
+  function iconBag() {
+    return `<svg viewBox="0 0 40 40"><rect x="7" y="13" width="26" height="22" rx="5" fill="var(--spend)"/><path d="M14 15v-3a6 6 0 0 1 12 0v3" fill="none" stroke="var(--spend)" stroke-width="3" stroke-linecap="round"/><circle cx="15" cy="20" r="2" fill="#fff"/><circle cx="25" cy="20" r="2" fill="#fff"/></svg>`;
+  }
+  function iconPig() {
+    return `<svg viewBox="0 0 40 40"><ellipse cx="20" cy="22" rx="14" ry="11" fill="var(--savings)"/><rect x="16" y="7" width="8" height="5" rx="2" fill="var(--good)"/><rect x="11" y="30" width="5" height="6" rx="2" fill="var(--savings)"/><rect x="24" y="30" width="5" height="6" rx="2" fill="var(--savings)"/><ellipse cx="32" cy="22" rx="4" ry="3.5" fill="#fff" opacity=".55"/><circle cx="26" cy="18" r="1.8" fill="#fff"/><rect x="15" y="13" width="10" height="2.5" rx="1.2" fill="#fff" opacity=".7"/></svg>`;
+  }
+  function iconHeart() {
+    return `<svg viewBox="0 0 40 40"><path d="M20 35S5 26 5 15.5A7.5 7.5 0 0 1 20 11a7.5 7.5 0 0 1 15 4.5C35 26 20 35 20 35z" fill="var(--good)"/><path d="M12 15a4 4 0 0 1 4-4" stroke="#fff" stroke-width="2.5" stroke-linecap="round" fill="none" opacity=".8"/></svg>`;
+  }
+
+  load();
+  setInterval(load, REFRESH_MS);
+  document.addEventListener("visibilitychange", () => { if (!document.hidden) load(); });
+</script>
+</body>
+</html>
